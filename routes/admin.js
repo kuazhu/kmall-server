@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-08-24 10:25:09
+* @Last Modified time: 2018-08-24 16:06:08
 */
 const Router = require('express').Router;
 
@@ -56,7 +56,7 @@ router.post("/login",(req,res)=>{
 			 }
 			 res.json(result);
 		}else{
-			result.code = 10;
+			result.code = 1;
 			result.message = '用户名和密码错误'
 			res.json(result);
 		}
