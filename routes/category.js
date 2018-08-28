@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-08-10 16:07:44
+* @Last Modified time: 2018-08-28 16:34:07
 */
 const Router = require('express').Router;
 const CategoryModel = require('../models/category.js');
@@ -15,9 +15,95 @@ router.use((req,res,next)=>{
 	if(req.userInfo.isAdmin){
 		next()
 	}else{
-		res.send('<h1>请用管理员账号登录</h1>');
+		res.send({
+			code:10
+		});
 	}
 })
+//添加分类
+router.post("/",(req,res)=>{
+	let body = req.body;
+	CategoryModel
+	.findOne({name:body.name,pid:body.pid})
+	.then((cate)=>{
+		if(cate){
+	 		res.json({
+	 			code:1,
+	 			message:"添加分类失败,分类已存在"
+	 		})
+		}else{
+			new CategoryModel({
+				name:body.name,
+				pid:body.pid
+			})
+			.save()
+			.then((newCate)=>{
+				if(newCate){
+					if(body.pid == 0){//如果添加的是一级分类,返回新的一级分类
+						CategoryModel.find({pid:0},"_id name")
+						.then((categories)=>{
+							res.json({
+								code:0,
+								data:categories
+							})	
+						})						
+					}else{
+						res.json({
+							code:0
+						})
+					}
+					
+				}
+			})
+			.catch((e)=>{
+		 		res.json({
+		 			code:1,
+		 			message:"添加分类失败,服务器端错误"
+		 		})
+			})
+		}
+	})
+})
+//获取分类
+router.get("/",(req,res)=>{
+	let pid = req.query.pid;
+	let page = req.query.page;
+	
+	if(page){
+		CategoryModel
+		.getPaginationCategories(page,{pid:pid})
+		.then((result)=>{
+			res.json({
+				code:0,
+				data:{
+					current:result.current,
+					total:result.total,
+					pageSize:result.pageSize,
+					list:result.list					
+				}
+			})	
+		})
+	}else{
+		CategoryModel.find({pid:pid},"_id name pid order")
+		.then((categories)=>{
+			res.json({
+				code:0,
+				data:categories
+			})	
+		})
+		.catch(e=>{
+	 		res.json({
+	 			code:1,
+	 			message:"获取分类失败,服务器端错误"
+	 		})		
+		})		
+	}
+
+});
+
+//so far so good
+
+
 
 //显示分类管理页面
 router.get("/",(req,res)=>{

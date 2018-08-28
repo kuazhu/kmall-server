@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:14:54
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-08-24 10:23:30
+* @Last Modified time: 2018-08-25 16:46:37
 */
 //项目入口文件
 const express = require('express');
@@ -35,6 +35,15 @@ app.use((req,res,next)=>{
 	res.append("Access-Control-Allow-Methods","GET, POST, PUT,DELETE");
 	res.append("Access-Control-Allow-Headers", "Content-Type, X-Requested-With"); 
 	next();
+})
+
+//OPTIONS请求处理
+app.use((req,res,next)=>{
+    if(req.method == 'OPTIONS'){
+        res.send('OPTIONS OK');
+    }else{
+        next();
+    }
 })
 
 //设置cookie的中间件,后面所有的中间件都会有cookie

@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-08-24 16:06:08
+* @Last Modified time: 2018-08-27 14:41:22
 */
 const Router = require('express').Router;
 
@@ -63,15 +63,56 @@ router.post("/login",(req,res)=>{
 	})
 })
 
-
 //权限控制
 router.use((req,res,next)=>{
 	if(req.userInfo.isAdmin){
 		next()
 	}else{
-		res.send('<h1>请用管理员账号登录</h1>');
+		res.send({
+			code:10
+		});
 	}
 })
+
+//系统统计
+router.get('/count',(req,res)=>{
+	res.json({
+		code:0,
+		data:{
+			usernum:300,
+			ordernum:301,
+			productnum:302
+		}
+	})
+})
+//获取用户
+router.get('/users',(req,res)=>{
+	let options = {
+		page: req.query.page,//需要显示的页码
+		model:UserModel, //操作的数据模型
+		query:{}, //查询条件
+		projection:'-password -__v -updatedAt', //投影，
+		sort:{_id:-1} //排序
+	}
+	pagination(options)
+	.then((result)=>{
+		res.json({
+			code:0,
+			data:{
+				current:result.current,
+				total:result.total,
+				pageSize:result.pageSize,
+				list:result.list
+			}
+		})
+	})
+})
+// so far so good......
+
+
+
+
+
 
 //显示管理员首页
 router.get("/",(req,res)=>{
@@ -81,30 +122,7 @@ router.get("/",(req,res)=>{
 })
 
 //显示用户列表
-router.get('/users',(req,res)=>{
 
-	//获取所有用户的信息,分配给模板
-
-	let options = {
-		page: req.query.page,//需要显示的页码
-		model:UserModel, //操作的数据模型
-		query:{}, //查询条件
-		projection:'_id username isAdmin', //投影，
-		sort:{_id:-1} //排序
-	}
-
-	pagination(options)
-	.then((data)=>{
-		res.render('admin/user_list',{
-			userInfo:req.userInfo,
-			users:data.docs,
-			page:data.page,
-			list:data.list,
-			pages:data.pages,
-			url:'/admin/users'
-		});	
-	})
-})
 
 //添加文章是处理图片上传
 router.post('/uploadImages',upload.single('upload'),(req,res)=>{

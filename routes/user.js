@@ -2,13 +2,33 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-08-07 11:10:28
+* @Last Modified time: 2018-08-27 10:53:59
 */
 const Router = require('express').Router;
 const UserModel = require('../models/user.js');
 const hmac = require('../util/hmac.js')
 
 const router = Router();
+/*
+router.get('/init',(req,res)=>{
+	const users = [];
+
+	for(let i = 0;i<100;i++){
+		users.push({
+			username:'test'+i,
+			password:hmac('test'+i),
+			isAdmin:false,
+			phone:'13681822'+i,
+			email:'test'+i+'@kuazhu.com'			
+		})
+	}
+	UserModel.create(users)
+	.then((result)=>{
+		res.send('ok');
+	})
+
+})
+*/
 
 //注册用户
 router.post("/register",(req,res)=>{
