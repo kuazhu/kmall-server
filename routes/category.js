@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-08-28 16:34:07
+* @Last Modified time: 2018-08-30 10:57:00
 */
 const Router = require('express').Router;
 const CategoryModel = require('../models/category.js');
@@ -100,7 +100,80 @@ router.get("/",(req,res)=>{
 	}
 
 });
+//更新名称
+router.put("/updateName",(req,res)=>{
+	let body = req.body;
+	CategoryModel
+	.findOne({name:body.name,pid:body.pid})
+	.then((cate)=>{
+		if(cate){
+	 		res.json({
+	 			code:1,
+	 			message:"更新分类失败,分类已存在"
+	 		})
+		}else{
+			CategoryModel
+			.update({_id:body.id},{name:body.name})
+			.then((cate)=>{
+				if(cate){
+					CategoryModel
+					.getPaginationCategories(body.page,{pid:body.pid})
+					.then((result)=>{
+						res.json({
+							code:0,
+							data:{
+								current:result.current,
+								total:result.total,
+								pageSize:result.pageSize,
+								list:result.list					
+							}
+						})	
+					})					
+				}else{
+			 		res.json({
+			 			code:1,
+			 			message:"更新分类失败,数据操作失败"
+			 		})					
+				}
+			})
+			.catch((e)=>{
+		 		res.json({
+		 			code:1,
+		 			message:"添加分类失败,服务器端错误"
+		 		})
+			})
+		}
+	})
+})
 
+//更新排序
+router.put("/updateOrder",(req,res)=>{
+	let body = req.body;
+	CategoryModel
+	.update({_id:body.id},{order:body.order})
+	.then((cate)=>{
+		if(cate){
+			CategoryModel
+			.getPaginationCategories(body.page,{pid:body.pid})
+			.then((result)=>{
+				res.json({
+					code:0,
+					data:{
+						current:result.current,
+						total:result.total,
+						pageSize:result.pageSize,
+						list:result.list					
+					}
+				})	
+			})					
+		}else{
+	 		res.json({
+	 			code:1,
+	 			message:"更新排序失败,数据操作失败"
+	 		})					
+		}
+	})
+})
 //so far so good
 
 
