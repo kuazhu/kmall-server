@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-09-01 11:42:37
+* @Last Modified time: 2018-09-03 17:03:20
 */
 const Router = require('express').Router;
 const ProductModel = require('../models/product.js');
@@ -76,6 +76,34 @@ router.post("/",(req,res)=>{
  		res.json({
  			code:1,
  			message:"添加分类失败,服务器端错误"
+ 		})
+	})
+})
+
+//编辑商品
+router.put("/",(req,res)=>{
+	let body = req.body;
+	let update = {
+		name:body.name,
+		category:body.category,
+		detail:body.detail,
+		description:body.description,
+		images:body.images,
+		price:body.price,
+		stock:body.stock
+	}
+	ProductModel
+	.update({_id:body.id},update)
+	.then((raw)=>{
+		res.json({
+			code:0,
+			message:'更新商品成功'
+		})
+	})
+	.catch((e)=>{
+ 		res.json({
+ 			code:1,
+ 			message:"更新分类失败,服务器端错误"
  		})
 	})
 })
@@ -161,4 +189,51 @@ router.put("/updateStatus",(req,res)=>{
 		}
 	})
 })
+
+//获取商品详细信息
+router.get("/detail",(req,res)=>{
+	let id = req.query.id;
+	ProductModel
+	.findById(id,"-__v -order -status -createdAt -updatedAt")
+	.populate({path:'category',select:'_id pid'})
+	.then((product)=>{
+		res.json({
+			code:0,
+			data:product
+		})	
+	})
+	.catch((e)=>{
+ 		res.json({
+ 			code:1,
+ 			message:"获取商品失败,服务器端错误"
+ 		})
+	})		
+});
+//搜索
+router.get("/search",(req,res)=>{
+	let page = req.query.page || 1;
+	let keyword = req.query.keyword;
+	ProductModel
+	.getPaginationProducts(page,{
+		name:{$regex:new RegExp(keyword,'i')}
+	})
+	.then((result)=>{
+		res.json({
+			code:0,
+			data:{
+				current:result.current,
+				total:result.total,
+				pageSize:result.pageSize,
+				list:result.list,
+				keyword:keyword					
+			}
+		})	
+	})
+	.catch((e)=>{
+ 		res.json({
+ 			code:1,
+ 			message:"获取分类失败,服务器端错误"
+ 		})
+	})		
+});
 module.exports = router;
