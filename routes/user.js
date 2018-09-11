@@ -2,10 +2,11 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-09-07 16:36:55
+* @Last Modified time: 2018-09-11 09:59:24
 */
 const Router = require('express').Router;
 const UserModel = require('../models/user.js');
+const ProductModel = require('../models/product.js');
 const hmac = require('../util/hmac.js')
 
 const router = Router();
