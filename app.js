@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:14:54
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-09-11 10:02:08
+* @Last Modified time: 2018-09-18 11:20:02
 */
 //项目入口文件
 const express = require('express');
@@ -78,18 +78,13 @@ app.use(bodyParser.json());
 
 //处理路由
 app.use("/admin",require('./routes/admin.js'));
-
-app.use("/",require('./routes/index.js'));
 app.use("/user",require('./routes/user.js'));
 app.use("/category",require('./routes/category.js'));
 app.use("/product",require('./routes/product.js'));
 app.use("/cart",require('./routes/cart.js'));
-
-app.use("/article",require('./routes/article.js'));
-app.use("/comment",require('./routes/comment.js'));
-app.use("/resource",require('./routes/resource.js'));
-app.use("/home",require('./routes/home.js'));
-
+app.use("/shipping",require('./routes/shipping.js'));
+app.use("/order",require('./routes/order.js'));
+app.use("/payment",require('./routes/payment.js'));
 
 app.listen(3000,()=>{
 	console.log('server is running at 127.0.0.1:3000')

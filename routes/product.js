@@ -2,7 +2,7 @@
 * @Author: Tom
 * @Date:   2018-08-06 09:23:30
 * @Last Modified by:   TomChen
-* @Last Modified time: 2018-09-11 09:59:58
+* @Last Modified time: 2018-09-17 16:33:28
 */
 const Router = require('express').Router;
 const ProductModel = require('../models/product.js');
@@ -25,7 +25,7 @@ const upload = multer({ storage: storage })
 const router = Router();
 
 //获取商品列表
-router.get('/homeList',(req,res)=>{
+router.get('/home/list',(req,res)=>{
 	let page = req.query.page;
 	
 	let query = {status:0};
@@ -66,7 +66,7 @@ router.get('/homeList',(req,res)=>{
 })
 
 //获取商品详细信息
-router.get('/homeDetail',(req,res)=>{
+router.get('/home/detail',(req,res)=>{
 	ProductModel
 	.findOne({status:0,_id:req.query.productId},"-__v -createdAt -updatedAt -category")
 	.then(product=>{
@@ -167,7 +167,7 @@ router.put("/",(req,res)=>{
 	})
 })
 
-//获取商品
+//后台管理员获取商品列表
 router.get("/",(req,res)=>{
 	let page = req.query.page || 1;
 	ProductModel
@@ -291,7 +291,7 @@ router.get("/search",(req,res)=>{
 	.catch((e)=>{
  		res.json({
  			code:1,
- 			message:"获取分类失败,服务器端错误"
+ 			message:"搜索商品失败,服务器端错误"
  		})
 	})		
 });
